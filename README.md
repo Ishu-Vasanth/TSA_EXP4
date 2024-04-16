@@ -23,93 +23,50 @@ axis limits.
 plot_acf and plot_pacf.
 
 ## PROGRAM:
-### Importing necessary libraries and loading and displaying the dataset:
 ```
-import pandas as pd
-import numpy as np
+from pandas import read_csv
+from pandas import datetime
 from matplotlib import pyplot
-from statsmodels.tsa.ar_model import AutoReg
-from statsmodels.tsa.stattools import adfuller
-from statsmodels.tsa.arima.model import ARIMA
-from statsmodels.graphics.tsaplots import plot_pacf, plot_acf
-import sklearn.metrics
+from pandas.plotting import autocorrelation_plot
+from pandas import DataFrame
+from statsmodels.tsa.arima_model import ARIMA
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.tsa.arima_process import ArmaProcess
+import matplotlib.pyplot as plt
+import numpy as np
+import warnings
+warnings.filterwarnings('ignore')
+import matplotlib.pyplot as plt
+import numpy as np
 
-# Loading the dataset
-df = pd.read_csv("rainfall.csv")
+plt.rcParams['figure.figsize'] = [10, 7.5]
 
-# Exploring the dataset
-## Displaying the dataframe
-print("Dataset:")
-print(df)
-```
-
-### Extracting and Plotting the data the temperature data:
-```
-X = df['temp']
-print("\nTemperature Data:")
-print(X)
-print("\nTemperature Plot:")
-X.plot()
-```
-
-### Augmented Dickey-Fuller Test:
-```
-dtest = adfuller(X, autolag='AIC')
-print("\nAugmented Dickey-Fuller Test:")
-print("ADF:", dtest[0])
-print("P value:", dtest[1])
-print("No. of lags:", dtest[2])
-print("No. of observations used for ADF regression:", dtest[3])
-```
-
-### Train-Test Split and Model Fitting:
-```
-X_train = X[:len(X) - 15]
-X_test = X[len(X) - 15:]
-p = 3  
-q = 2  
-ARMA_model = ARIMA(X_train, order=(p, 0, q)).fit()
-print("\nARIMA Model Summary:")
-print(ARMA_model.summary())
-```
-
-### Autocorrelation and Partial Autocorrelation Plots and Making Predictions:
-```
-print("\nPartial Autocorrelation Plot:")
-pacf = plot_pacf(X, lags=25)
-print("\nAutocorrelation Plot:")
-acf = plot_acf(X, lags=25)
-pred = ARMA_model.predict(start=len(X_train), end=len(X_train) + len(X_test) - 1, dynamic=False)
-print("\nPredictions:")
-print(pred)
-```
-
-### Model Evaluation and Plotting Predictions:
-```
-mse = sklearn.metrics.mean_squared_error(X_test, pred) 
-rmse = mse ** 0.5
-print("\nRoot Mean Squared Error (RMSE):", rmse)
-print("\nTest Data vs Predictions:")
-X_test.plot(label='Test Data')
-pred.plot(label='Predictions')
-pyplot.legend()
-pyplot.show()
-print("Dataset:")
-print(df)
+ar1 = np.array([1,0.33])
+ma1 = np.array([1,0.9])
+ARMA_1 = ArmaProcess(ar1,ma1).generate_sample(nsample = 1000)
+plt.plot(ARMA_1)
+plt.title('Simulated ARMA(1,1) Process')
+plt.xlim([0, 200])
+plt.show()
+plot_acf(ARMA_1)
+plot_pacf(ARMA_1)
+ar2 = np.array([1, 0.33, 0.5])
+ma2 = np.array([1, 0.9, 0.3])
+ARMA_2 = ArmaProcess(ar2, ma2).generate_sample(nsample=10000)
+plt.plot(ARMA_2)
+plt.title('Simulated ARMA(2,2) Process')
+plt.xlim([0, 200])
+plt.show()
+plot_acf(ARMA_2)
+plot_pacf(ARMA_2)
 ```
 
 ## OUTPUT:
-### Partial Autocorrelation
-![1ts](https://github.com/Ishu-Vasanth/TSA_EXP4/assets/94154614/cf20b95d-426d-405a-8cf5-b5ab6dab1a1a)
+![ts1](https://github.com/Ishu-Vasanth/TSA_EXP4/assets/94154614/dc61c770-7478-4efa-a35f-d5750061f5a6)
 
-### Autocorrelation
-![2ts](https://github.com/Ishu-Vasanth/TSA_EXP4/assets/94154614/c2dc4fff-e2f1-464e-8458-75e952e81f26)
+![ts2](https://github.com/Ishu-Vasanth/TSA_EXP4/assets/94154614/0df0ccdd-1c92-4293-9c4d-c5263e4400a3)
 
-### Prediction Graph:
-![3ts](https://github.com/Ishu-Vasanth/TSA_EXP4/assets/94154614/5243d3b3-934d-4437-b672-c3372d470f44)
-
-### Test:
-![4ts](https://github.com/Ishu-Vasanth/TSA_EXP4/assets/94154614/65c14188-ea97-4417-8bd1-2def7fdca97e)
+![ts3](https://github.com/Ishu-Vasanth/TSA_EXP4/assets/94154614/8d88be2a-9591-4b30-a67a-9f9ab6c885e1)
 
 RESULT:
 Thus, a python program is created to fir ARMA Model successfully.
